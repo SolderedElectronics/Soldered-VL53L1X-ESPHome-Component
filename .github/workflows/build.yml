@@ -1,0 +1,37 @@
+name: Build Examples
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      examples: ${{ steps.find.outputs.examples }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - id: find
+        run: echo "examples=$(ls examples/*.yaml | jq -R -s -c 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        example: ${{ fromJson(needs.discover.outputs.examples) }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install ESPHome
+        run: pip install esphome
+
+      - name: Compile ${{ matrix.example }}
+        run: esphome compile ${{ matrix.example }}

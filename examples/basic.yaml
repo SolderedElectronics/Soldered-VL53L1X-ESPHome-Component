@@ -1,0 +1,18 @@
+esphome:
+  name: soldered-esphome-component-template-test
+
+esp32:
+  board: esp32-s3-devkitc-1
+  framework:
+    type: esp-idf
+
+logger:
+  level: DEBUG
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [soldered_esphome_component_template]
+
+soldered_esphome_component_template:

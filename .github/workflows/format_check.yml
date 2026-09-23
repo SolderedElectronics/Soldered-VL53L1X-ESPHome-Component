@@ -1,0 +1,23 @@
+name: Format Check
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install clang-format
+        run: pip install clang-format==13.0.1
+
+      - name: Check formatting
+        run: find components -name "*.cpp" -o -name "*.h" | xargs clang-format --dry-run --Werror
