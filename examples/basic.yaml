@@ -1,5 +1,8 @@
+# Reads distance from the Soldered VL53L1X laser distance sensor breakout board once a second, along with the signal
+# and ambient count rates and the range status of each measurement.
+
 esphome:
-  name: soldered-esphome-component-template-test
+  name: vl53l1x-basic
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -8,11 +11,38 @@ esp32:
 
 logger:
   level: DEBUG
+  hardware_uart: UART0
 
 external_components:
   - source:
       type: local
       path: ../components
-    components: [soldered_esphome_component_template]
+    components: [vl53l1x]
 
-soldered_esphome_component_template:
+i2c:
+  sda: GPIO8
+  scl: GPIO9
+  scan: true
+
+vl53l1x:
+  id: tof
+  address: 0x29
+  distance_mode: long
+  timing_budget: 50ms
+  update_interval: 1s
+
+sensor:
+  - platform: vl53l1x
+    vl53l1x_id: tof
+    distance:
+      name: "VL53L1X Distance"
+    signal_rate:
+      name: "VL53L1X Signal Rate"
+    ambient_rate:
+      name: "VL53L1X Ambient Rate"
+
+text_sensor:
+  - platform: vl53l1x
+    vl53l1x_id: tof
+    range_status:
+      name: "VL53L1X Range Status"
